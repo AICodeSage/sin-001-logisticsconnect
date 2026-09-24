@@ -79,8 +79,9 @@ mvn package
 java -jar target/ingestion-service.jar
 ```
 
-Listens on port `7050`. Currently just exposes `/health` — the actual CSV
-parsing/cleaning logic is a TODO.
+Listens on port `7050`. `GET /hubs` returns cleaned records and `GET /hubs/{hubId}`
+returns one record. Invalid rows are omitted; duplicate physical locations prefer an
+active row, then the lowest stable hub ID.
 
 ## Test
 

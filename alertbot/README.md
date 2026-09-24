@@ -40,6 +40,9 @@ java -jar target/alertbot.jar
 
 Listens on port `7054`.
 
+`GET /alerts` returns simulated public notices. A topic message with stage 5 or
+higher creates a notice and writes a `SIMULATED SOCIAL POST` log line.
+
 ## Test
 
 No automated tests yet. Manually verify it's up:

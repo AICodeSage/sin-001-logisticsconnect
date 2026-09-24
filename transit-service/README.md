@@ -34,6 +34,10 @@ java -jar target/transit-service.jar
 
 Listens on port `7053`.
 
+`GET /eta/{hubId}` loads hub details from hub-service and combines them with the
+locally cached `package-status-topic` stage event. It intentionally does not make a
+synchronous request to delay-stage-service.
+
 ## Test
 
 No automated tests yet. Manually verify it's up:

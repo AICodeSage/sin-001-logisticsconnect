@@ -28,8 +28,8 @@ cleanup through synchronous REST calls to asynchronous MQ decoupling and alertin
 Plus [`common/`](common) (no port) — the shared ActiveMQ broker and MQ config notes
 for `package-status-topic`: Package status updates move from latency-driven RPC to bandwidth-driven messaging.
 
-**Status:** scaffold only — build files, Javalin bootstrap, and TODOs are in place; no
-business logic has been implemented yet.
+**Status:** stages 1–3 and the AlertBot stretch goal are implemented. Services use
+REST for hub lookups and ActiveMQ for delay-stage propagation.
 
 ## Your task
 
@@ -135,6 +135,22 @@ cd common && docker compose up -d
 # alerting
 cd alertbot && mvn package && java -jar target/alertbot.jar
 ```
+
+## API quick reference
+
+Start the broker before the MQ-aware services: `cd common && docker compose up -d`.
+
+| Service | Endpoint | Purpose |
+|---|---|---|
+| ingestion | `GET /hubs`, `GET /hubs/{hubId}` | Cleaned, deduplicated hub records |
+| hub | `GET /hubs`, `GET /hubs/{hubId}`, `GET /provinces` | Ingestion-backed place data |
+| delay stage | `GET /delay-stage/{hubId}`, `POST /delay-stage/{hubId}` | Read/update a stage; POST body is `{"stage": 3}` |
+| transit | `GET /eta/{hubId}` | ETA based on hub data and the local MQ event view |
+| alertbot | `GET /alerts`, `GET /alerts/threshold` | Simulated alerts for stage 5 or above |
+
+For an end-to-end check, start ingestion, hub, transit, delay-stage, and alertbot;
+then post `{"stage":5}` to `/delay-stage/H-501`. Transit will use the topic event
+for its next ETA response, and AlertBot will print a simulated social post.
 
 | Service | Port |
 |---|---|
